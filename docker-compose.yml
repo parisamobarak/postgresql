@@ -1,0 +1,40 @@
+version: "3"
+
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=lorestanuniv2
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1375137500
+    networks:
+      - net
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:    
+      - .:/var
+    privileged: true
+
+  app:
+    build: .
+    container_name: fastapi
+    command: uvicorn --host 0.0.0.0 --port 8000 main:app --reload
+    volumes:
+      - .:/source
+    privileged: true
+    ports:
+      - "8080:8000"
+    depends_on:
+      - postgres
+    networks:
+      - net
+    restart: always
+
+networks:
+  net:
+    driver: bridge
+
+
